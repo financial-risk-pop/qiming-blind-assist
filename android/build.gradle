@@ -1,0 +1,80 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+
+// ================================================================
+// 兼容性修复 #2：为 Library 插件暴露 flutter.xxx 版本属性
+//
+// 背景：部分老插件（geolocator_android 4.6 等）在自己的 build.gradle 中使用:
+//     compileSdk flutter.compileSdkVersion
+//     minSdk flutter.minSdkVersion
+// 但 Flutter Gradle Plugin 只应用于 :app 模块，不会传播到 plugin 子项目。
+//
+// 解决方案：为非 :app 子项目注入一个同名 `flutter` 对象。
+// ================================================================
+configure(subprojects.findAll { it.name != "app" }) {
+    project.ext.flutter = new Object() {
+        int compileSdkVersion = 35
+        int minSdkVersion = 24
+        int targetSdkVersion = 34
+        String ndkVersion = "26.1.10909125"
+        int versionCode = 1
+        String versionName = "1.0"
+    }
+}
+
+// ================================================================
+// 兼容性修复 #1：为未声明 namespace 的老旧插件注入 namespace
+//
+// 注意：必须在 evaluationDependsOn 之前使用 afterEvaluate 注册监听器，
+// 否则被依赖的项目已经评估完成，afterEvaluate 就来不及执行。
+// ================================================================
+subprojects {
+    afterEvaluate { proj ->
+        if (proj.hasProperty("android")) {
+            def androidExt = proj.extensions.findByName("android")
+            if (androidExt != null) {
+                // 强制所有子项目使用 compileSdk 35 解决 lStar 问题
+                try {
+                    if (androidExt.compileSdkVersion != null) {
+                        androidExt.compileSdk = 35
+                    }
+                } catch (Exception ignored) {}
+
+                if (androidExt.namespace == null) {
+                    def manifestFile = proj.file("src/main/AndroidManifest.xml")
+                    if (manifestFile.exists()) {
+                        try {
+                            def xml = new XmlParser().parse(manifestFile)
+                            def pkg = xml.@package
+                            if (pkg != null && pkg.toString().trim()) {
+                                androidExt.namespace = pkg.toString()
+                                println "  → [namespace-fix] ${proj.name}: namespace=${pkg}"
+                            }
+                        } catch (Exception ignored) {
+                            // 忽略解析失败
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 必须放在 afterEvaluate 注册之后
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

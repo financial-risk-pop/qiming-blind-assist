@@ -1,0 +1,98 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace = "com.blindassist.blind_assist_app"
+    compileSdk = 35
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
+    defaultConfig {
+        applicationId = "com.blindassist.blind_assist_app"
+        // minSdk=24 (Android 7.0)
+        // - 无障碍服务完整可用
+        // - camera2 / MediaProjection / ML Kit 支持良好
+        // - 覆盖 98%+ 活跃设备
+        minSdk = 24
+        targetSdk = 34
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+
+        // 启用 multidex（TFLite + 高德 + ML Kit 依赖较多）
+        multiDexEnabled = true
+
+        // 只保留 App 需要的语言资源，减小包体
+        resourceConfigurations += ['zh', 'en']
+
+        // ABI 分包（减小 APK 体积）
+        // ndk {
+        //     abiFilters 'armeabi-v7a', 'arm64-v8a'
+        // }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            debuggable true
+            minifyEnabled false
+        }
+        release {
+            // TODO: 发布版需要配置签名，当前先使用 debug keys 保证 flutter run --release 可用
+            signingConfig = signingConfigs.debug
+
+            // R8 代码混淆（减小包体 + 基础混淆）
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // 打包配置
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+        resources {
+            excludes += [
+                '/META-INF/{AL2.0,LGPL2.1}',
+                '/META-INF/DEPENDENCIES',
+                '/META-INF/LICENSE',
+                '/META-INF/LICENSE.txt',
+                '/META-INF/NOTICE'
+            ]
+        }
+    }
+
+    // 构建产物命名
+    buildFeatures {
+        buildConfig = true
+    }
+}
+
+dependencies {
+    // MultiDex 支持（minSdk < 21 需要，这里保留兼容）
+    implementation "androidx.multidex:multidex:2.0.1"
+
+    // Kotlin 协程（AccessibilityService 中用于异步处理）
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
+
+    // play-core (Flutter deferred components 需要)
+    implementation "com.google.android.play:feature-delivery:2.1.0"
+}
+
+flutter {
+    source = "../.."
+}

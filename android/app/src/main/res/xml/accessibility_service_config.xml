@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    BlindAssist 无障碍服务配置
+    用途：为 App 内容解读功能提供 AccessibilityService 能力
+    
+    关键配置说明：
+    - canRetrieveWindowContent=true     → 能获取其他 App 的窗口内容
+    - canPerformGestures=true            → 能代替用户执行点击、滑动等手势
+    - accessibilityEventTypes=typeAll    → 监听所有类型的无障碍事件
+    - accessibilityFlags=所有增强能力     → 开启所有辅助特性
+-->
+<accessibility-service
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/accessibility_service_description"
+    android:summary="@string/accessibility_service_summary"
+    android:accessibilityEventTypes="typeAllMask"
+    android:accessibilityFlags="flagDefault|flagIncludeNotImportantViews|flagRequestTouchExplorationMode|flagReportViewIds|flagRequestFilterKeyEvents|flagRetrieveInteractiveWindows"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:notificationTimeout="100"
+    android:canRetrieveWindowContent="true"
+    android:canRequestTouchExplorationMode="true"
+    android:canRequestFilterKeyEvents="true"
+    android:canPerformGestures="true" />
