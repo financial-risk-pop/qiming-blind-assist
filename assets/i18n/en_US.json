@@ -1,0 +1,53 @@
+{
+  "app_name": "QiMing",
+  "welcome": "Welcome to QiMing",
+  "tabs": {
+    "home": "Home",
+    "navigation": "Navigation",
+    "detection": "Detection",
+    "ocr": "OCR",
+    "settings": "Settings"
+  },
+  "voice": {
+    "listening": "Listening",
+    "processing": "Processing",
+    "speaking": "Speaking",
+    "wake_word_hint": "Please say a command, e.g., 'Navigate to hospital'",
+    "not_understand": "Sorry, I didn't catch that. Please try again",
+    "network_required": "This feature requires an internet connection"
+  },
+  "detection": {
+    "start": "Obstacle detection started",
+    "stop": "Obstacle detection stopped",
+    "obstacle_front": "{type} {distance} meters ahead",
+    "obstacle_left": "{type} {distance} meters to your left",
+    "obstacle_right": "{type} {distance} meters to your right",
+    "critical_warning": "Warning! Obstacle directly ahead, stop now!"
+  },
+  "navigation": {
+    "planning": "Planning route",
+    "started": "Route planned, total {distance} meters, estimated {minutes} minutes",
+    "turn_left": "Turn left in {distance} meters",
+    "turn_right": "Turn right in {distance} meters",
+    "go_straight": "Continue straight for {distance} meters",
+    "deviation": "Off route, re-routing",
+    "arrived": "You have arrived at your destination"
+  },
+  "ocr": {
+    "no_text": "No text detected",
+    "recognizing": "Recognizing text",
+    "result_prefix": "Detected: "
+  },
+  "permission": {
+    "camera_denied": "Camera permission denied. Detection and OCR unavailable",
+    "location_denied": "Location permission denied. Navigation unavailable",
+    "microphone_denied": "Microphone permission denied. Voice interaction unavailable",
+    "accessibility_denied": "Accessibility service not enabled. App reading unavailable"
+  },
+  "errors": {
+    "network_error": "Network error, please check your connection",
+    "camera_error": "Failed to start camera, please restart the app",
+    "model_load_error": "Failed to load AI model",
+    "unknown_error": "An unknown error occurred"
+  }
+}

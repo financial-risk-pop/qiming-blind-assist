@@ -1,0 +1,53 @@
+{
+  "app_name": "启明",
+  "welcome": "欢迎使用启明",
+  "tabs": {
+    "home": "主页",
+    "navigation": "导航",
+    "detection": "障碍物检测",
+    "ocr": "文字识别",
+    "settings": "设置"
+  },
+  "voice": {
+    "listening": "正在聆听",
+    "processing": "正在处理",
+    "speaking": "正在播报",
+    "wake_word_hint": "请说出指令，例如'导航去人民医院'",
+    "not_understand": "抱歉，我没有听清，请再说一次",
+    "network_required": "此功能需要网络连接"
+  },
+  "detection": {
+    "start": "障碍物检测已开启",
+    "stop": "障碍物检测已关闭",
+    "obstacle_front": "正前方{distance}米有{type}",
+    "obstacle_left": "左前方{distance}米有{type}",
+    "obstacle_right": "右前方{distance}米有{type}",
+    "critical_warning": "注意！正前方有障碍物，请立即停止！"
+  },
+  "navigation": {
+    "planning": "正在规划路线",
+    "started": "已规划路线，全程{distance}米，预计{minutes}分钟",
+    "turn_left": "前方{distance}米左转",
+    "turn_right": "前方{distance}米右转",
+    "go_straight": "继续直行{distance}米",
+    "deviation": "已偏离路线，正在为您重新规划",
+    "arrived": "您已到达目的地附近"
+  },
+  "ocr": {
+    "no_text": "没有识别到文字",
+    "recognizing": "正在识别文字",
+    "result_prefix": "识别到："
+  },
+  "permission": {
+    "camera_denied": "未授予摄像头权限，无法使用障碍物检测和文字识别功能",
+    "location_denied": "未授予定位权限，无法使用导航功能",
+    "microphone_denied": "未授予麦克风权限，无法使用语音交互功能",
+    "accessibility_denied": "未开启无障碍服务，无法读取其他 App 的界面内容"
+  },
+  "errors": {
+    "network_error": "网络连接失败，请检查网络后重试",
+    "camera_error": "摄像头启动失败，请重启 App 后重试",
+    "model_load_error": "AI 模型加载失败",
+    "unknown_error": "发生未知错误"
+  }
+}

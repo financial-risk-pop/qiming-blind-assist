@@ -1,0 +1,9 @@
+# 唤醒词模型占位说明
+# 
+# Porcupine 唤醒词引擎需要付费 Access Key
+# 申请地址：https://console.picovoice.ai/
+# 
+# 获得 Key 后：
+# 1. 下载中文 "小助手" 的 .ppn 唤醒词模型
+# 2. 重命名为 wake_word.ppn 放入本目录
+# 3. 将 Access Key 填入 lib/core/constants/app_constants.dart

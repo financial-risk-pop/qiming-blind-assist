@@ -1,0 +1,63 @@
+{
+  "apps": [
+    {
+      "package_name": "com.tencent.mm",
+      "app_name": "微信",
+      "category": "social",
+      "description": "聊天和社交应用，可以发消息、语音通话、视频通话、朋友圈和支付",
+      "pages": {
+        "main": {
+          "summary": "微信主页面，底部有4个标签：消息、通讯录、发现、我",
+          "elements_guide": "顶部是搜索框和加号按钮，中间是聊天列表"
+        },
+        "chat": {
+          "summary": "聊天对话页面",
+          "elements_guide": "顶部是联系人名称和更多按钮，中间是消息列表，底部是输入框和语音/表情按钮"
+        },
+        "contacts": {
+          "summary": "通讯录页面，展示所有联系人",
+          "elements_guide": "顶部有搜索框，下面有新的朋友、群聊、标签等入口，然后是按字母排序的联系人列表"
+        }
+      },
+      "common_operations": [
+        {"action": "发消息", "steps": "在消息标签下点击联系人→在底部输入框输入文字→点击发送"},
+        {"action": "语音通话", "steps": "进入聊天页面→点击右下角加号→选择语音通话"},
+        {"action": "扫码支付", "steps": "点击右上角加号→选择扫一扫→对准二维码"}
+      ]
+    },
+    {
+      "package_name": "com.eg.android.AlipayGphone",
+      "app_name": "支付宝",
+      "category": "payment",
+      "description": "支付和生活服务应用，可以转账、扫码支付、缴费和各种生活服务",
+      "pages": {
+        "main": {
+          "summary": "支付宝首页，顶部搜索框，下面有扫一扫、收付款等快捷按钮，底部有首页、理财、口碑、消息、我的五个标签",
+          "elements_guide": "第一排快捷按钮：扫一扫、收付款、出行、卡包"
+        }
+      },
+      "common_operations": [
+        {"action": "付款", "steps": "点击首页上的收付款按钮→展示付款码"},
+        {"action": "转账", "steps": "点击首页的转账按钮→输入对方账号→输入金额→确认"},
+        {"action": "缴费", "steps": "首页找到生活缴费→选择缴费类型→输入户号→确认支付"}
+      ]
+    },
+    {
+      "package_name": "com.taobao.taobao",
+      "app_name": "淘宝",
+      "category": "shopping",
+      "description": "购物应用，可以搜索商品、浏览推荐、下单购买",
+      "pages": {
+        "main": {
+          "summary": "淘宝首页，顶部是搜索框和扫一扫，下面是分类导航和商品推荐",
+          "elements_guide": "底部有首页、逛逛、消息、购物车、我的淘宝五个标签"
+        }
+      },
+      "common_operations": [
+        {"action": "搜索商品", "steps": "点击顶部搜索框→输入商品名称→点击搜索"},
+        {"action": "查看购物车", "steps": "点击底部购物车标签"},
+        {"action": "查看订单", "steps": "点击我的淘宝→点击我的订单"}
+      ]
+    }
+  ]
+}
