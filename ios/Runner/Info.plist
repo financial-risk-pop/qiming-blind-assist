@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>启明</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>blind_assist_app</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+
+	<!-- 仅支持竖屏（盲人用户无需旋转） -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	</array>
+
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+
+	<!-- ============ 权限描述（iOS 必须提供清晰的用途说明） ============ -->
+
+	<!-- 摄像头：障碍物检测 + OCR -->
+	<key>NSCameraUsageDescription</key>
+	<string>启明需要使用摄像头来实时检测前方障碍物和识别文字内容，为您提供安全出行和信息获取的辅助。所有摄像头数据仅在设备本地处理，不会上传。</string>
+
+	<!-- 麦克风：语音识别 -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>启明需要使用麦克风来接收您的语音指令，实现全语音操作 App 的功能。</string>
+
+	<!-- 定位：语音导航（使用时） -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>启明需要获取您的位置信息以提供精准的步行导航服务。</string>
+
+	<!-- 定位：语音导航（始终，用于后台导航） -->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>启明需要在导航过程中持续获取您的位置（即使 App 在后台），以保证您沿正确路线行走和及时偏航提醒。</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>启明需要在后台持续定位以提供不间断的语音导航服务。</string>
+
+	<!-- 语音识别 -->
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>启明需要使用语音识别来理解您的语音指令。</string>
+
+	<!-- 相册（可选：用户可能需要识别图片中的文字） -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>启明可以识别您相册中图片的文字内容并朗读给您听。</string>
+
+	<!-- 动作与健身（步态检测需要） -->
+	<key>NSMotionUsageDescription</key>
+	<string>启明使用运动传感器来判断您的行走状态，智能调整检测频率以节省电量。</string>
+
+	<!-- 联系人（可选：紧急联系人拨号） -->
+	<key>NSContactsUsageDescription</key>
+	<string>启明需要访问联系人以便设置紧急求助联系人。</string>
+
+	<!-- 后台运行模式 -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>           <!-- 后台 TTS 播报 -->
+		<string>location</string>        <!-- 后台导航定位 -->
+		<string>processing</string>      <!-- 后台 AI 推理 -->
+		<string>voip</string>            <!-- 持续语音交互 -->
+	</array>
+
+	<!-- 网络安全（允许访问 HTTPS 云端 API） -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+	</dict>
+
+	<!-- 高德地图 API Key 占位（需替换为真实 Key） -->
+	<key>AMapApiKey</key>
+	<string>YOUR_AMAP_IOS_API_KEY_HERE</string>
+</dict>
+</plist>
