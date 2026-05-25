@@ -1,0 +1,25 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # 代码风格
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_final_fields: true
+    prefer_final_locals: true
+    avoid_print: true
+    
+    # 类型安全
+    always_declare_return_types: true
+    annotate_overrides: true
+    avoid_dynamic_calls: true
+    
+    # 无障碍相关
+    # 确保所有Widget都有语义标注（通过Code Review保证）
+
+analyzer:
+  errors:
+    invalid_annotation_target: ignore
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
