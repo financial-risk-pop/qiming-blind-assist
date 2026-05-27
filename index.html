@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>启明 — AI视障出行辅助App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --accent: #f59e0b;
+            --bg-dark: #0a0e1a;
+            --bg-card: #141827;
+            --bg-card-hover: #1a2035;
+            --text-primary: #f1f5f9;
+            --text-secondary: #8892a8;
+            --gradient-1: linear-gradient(135deg, #2563eb, #7c3aed);
+            --gradient-2: linear-gradient(135deg, #06b6d4, #3b82f6);
+            --gradient-3: linear-gradient(135deg, #f59e0b, #ef4444);
+            --glass: rgba(255,255,255,0.03);
+            --border: rgba(255,255,255,0.06);
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Top Nav */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10,14,26,0.85);
+            backdrop-filter: blur(20px) saturate(1.5);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-brand {
+            font-weight: 700;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-primary);
+        }
+        .nav-brand-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 900;
+            color: #fff;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .github-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--text-primary) !important;
+            font-weight: 500;
+            font-size: 0.82rem;
+            transition: all 0.2s;
+            text-decoration: none !important;
+        }
+        .github-btn:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+        .github-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 6rem 2rem 2rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(37,99,235,0.12) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(6,182,212,0.06) 0%, transparent 50%);
+            animation: bgPulse 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.7; transform: scale(1.05); }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(37,99,235,0.4);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .hero-content {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            max-width: 850px;
+        }
+
+        .logo-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            border-radius: 26px;
+            background: var(--gradient-1);
+            margin-bottom: 1.8rem;
+            box-shadow: 0 20px 60px rgba(37,99,235,0.25), 0 0 0 1px rgba(255,255,255,0.1);
+            position: relative;
+        }
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 29px;
+            background: linear-gradient(135deg, rgba(37,99,235,0.5), rgba(124,58,237,0.5));
+            z-index: -1;
+            filter: blur(15px);
+        }
+        .logo-container::after {
+            content: '启';
+            font-size: 3rem;
+            font-weight: 900;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.8rem, 7vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.08em;
+        }
+
+        .hero .tagline {
+            font-size: clamp(1.05rem, 2.5vw, 1.4rem);
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+            font-weight: 300;
+        }
+
+        .hero .subtitle {
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.8rem;
+            border-radius: 10px;
+            background: var(--gradient-1);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(37,99,235,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(37,99,235,0.4); }
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.8rem;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.06); transform: translateY(-2px); }
+
+        /* Phone Mockup - redesigned */
+        .phone-mockup {
+            width: 240px;
+            height: 480px;
+            border-radius: 32px;
+            border: 2px solid rgba(255,255,255,0.1);
+            background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+            margin: 0 auto 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .phone-notch {
+            width: 100px;
+            height: 22px;
+            background: #000;
+            border-radius: 0 0 14px 14px;
+            margin: 0 auto;
+        }
+        .phone-screen {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: calc(100% - 22px);
+        }
+        .phone-greeting {
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .phone-sub {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-top: 0.4rem;
+        }
+        .phone-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        .phone-btn {
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 0.9rem 0.4rem;
+            text-align: center;
+            font-size: 0.68rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .phone-btn-icon { font-size: 1.5rem; margin-bottom: 0.3rem; display: block; }
+        .phone-voice {
+            margin-top: auto;
+            margin-bottom: 0.8rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 20px rgba(37,99,235,0.4);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 4px 20px rgba(37,99,235,0.4); }
+            50% { box-shadow: 0 4px 30px rgba(37,99,235,0.6), 0 0 0 8px rgba(37,99,235,0.1); }
+        }
+
+        /* Sections */
+        section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+        }
+
+        .section-header {
+            margin-bottom: 3.5rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.3rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: rgba(37,99,235,0.1);
+            color: var(--primary-light);
+            border: 1px solid rgba(37,99,235,0.2);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            max-width: 600px;
+            font-size: 1.02rem;
+        }
+
+        /* Feature Cards */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(37,99,235,0.2);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            background: var(--bg-card-hover);
+        }
+        .feature-card:hover::before { opacity: 1; }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .icon-scene { background: linear-gradient(135deg, #3b82f6, #8b5cf6); }
+        .icon-obstacle { background: linear-gradient(135deg, #ef4444, #f97316); }
+        .icon-nav { background: linear-gradient(135deg, #10b981, #06b6d4); }
+        .icon-ocr { background: linear-gradient(135deg, #f59e0b, #eab308); }
+        .icon-voice { background: linear-gradient(135deg, #ec4899, #a855f7); }
+        .icon-tts { background: linear-gradient(135deg, #6366f1, #2563eb); }
+
+        /* Architecture */
+        .arch-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .arch-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed, #06b6d4);
+        }
+
+        .arch-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .arch-layer {
+            border-radius: 12px;
+            padding: 1.3rem 1.8rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        .arch-layer:hover {
+            transform: translateX(4px);
+            border-color: rgba(255,255,255,0.12);
+        }
+
+        .layer-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .layer-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .layer-desc {
+            color: var(--text-secondary);
+            font-size: 0.87rem;
+            line-height: 1.7;
+        }
+
+        .layer-perception { background: rgba(59,130,246,0.05); }
+        .layer-perception .layer-dot { background: #3b82f6; box-shadow: 0 0 8px rgba(59,130,246,0.5); }
+        .layer-interaction { background: rgba(168,85,247,0.05); }
+        .layer-interaction .layer-dot { background: #a855f7; box-shadow: 0 0 8px rgba(168,85,247,0.5); }
+        .layer-navigation { background: rgba(16,185,129,0.05); }
+        .layer-navigation .layer-dot { background: #10b981; box-shadow: 0 0 8px rgba(16,185,129,0.5); }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 2.5rem;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 1.8rem 1rem;
+            background: var(--bg-card);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-3px); border-color: rgba(37,99,235,0.2); }
+        .stat-num {
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            margin-top: 0.4rem;
+        }
+
+        /* Innovation */
+        .innovation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .innovation-item {
+            display: flex;
+            gap: 1.2rem;
+            align-items: flex-start;
+            background: var(--bg-card);
+            padding: 1.8rem 2rem;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        .innovation-item:hover {
+            transform: translateX(4px);
+            border-color: rgba(37,99,235,0.2);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+        .innovation-num {
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+        .innovation-item h4 {
+            font-size: 1.02rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+        .innovation-item p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        /* Workflow section */
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            margin-top: 3rem;
+            position: relative;
+        }
+        .workflow-grid::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(37,99,235,0.3), rgba(124,58,237,0.3), rgba(6,182,212,0.3), rgba(16,185,129,0.3));
+            z-index: 0;
+        }
+        .workflow-step {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .workflow-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin: 0 auto 0.8rem;
+            border: 2px solid var(--border);
+            background: var(--bg-dark);
+        }
+        .workflow-step:nth-child(1) .workflow-circle { border-color: rgba(37,99,235,0.4); box-shadow: 0 0 15px rgba(37,99,235,0.15); }
+        .workflow-step:nth-child(2) .workflow-circle { border-color: rgba(124,58,237,0.4); box-shadow: 0 0 15px rgba(124,58,237,0.15); }
+        .workflow-step:nth-child(3) .workflow-circle { border-color: rgba(6,182,212,0.4); box-shadow: 0 0 15px rgba(6,182,212,0.15); }
+        .workflow-step:nth-child(4) .workflow-circle { border-color: rgba(16,185,129,0.4); box-shadow: 0 0 15px rgba(16,185,129,0.15); }
+        .workflow-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Code Tree */
+        .code-tree {
+            background: #080c14;
+            border-radius: 14px;
+            padding: 2rem;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: #7ee787;
+            overflow-x: auto;
+            line-height: 1.9;
+            border: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        .code-tree .folder { color: #79c0ff; }
+        .code-tree .file { color: #c9d1d9; }
+        .code-tree .comment { color: #6e7681; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            position: relative;
+        }
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(37,99,235,0.3), transparent);
+        }
+        footer .motto {
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            section { padding: 4rem 1.2rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .workflow-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+            .workflow-grid::before { display: none; }
+            .nav-links a:not(.github-btn) { display: none; }
+            .phone-mockup { width: 200px; height: 400px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <div class="nav-brand-icon">启</div>
+            启明
+        </div>
+        <div class="nav-links">
+            <a href="#demo">演示</a>
+            <a href="#features">功能</a>
+            <a href="#architecture">架构</a>
+            <a href="#innovation">创新</a>
+            <a href="#code">代码</a>
+            <a href="https://github.com/financial-risk-pop/qiming-blind-assist" target="_blank" class="github-btn">
+                <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                源码
+            </a>
+        </div>
+    </nav>
+
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="logo-container"></div>
+            <h1>启明</h1>
+            <p class="tagline">AI驱动的视障人群出行辅助App</p>
+            <p class="subtitle">「愿你眼中有光」</p>
+
+            <div class="hero-cta">
+                <a href="https://github.com/financial-risk-pop/qiming-blind-assist" target="_blank" class="btn-primary">
+                    <svg viewBox="0 0 16 16" style="width:16px;height:16px;fill:currentColor;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    查看完整源码
+                </a>
+                <a href="#features" class="btn-outline">了解更多 ↓</a>
+            </div>
+
+            <!-- Phone Mockup -->
+            <div class="phone-mockup">
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                    <div class="phone-greeting">你好 👋</div>
+                    <div class="phone-sub">启明已就绪，随时为您服务</div>
+                    <div class="phone-buttons">
+                        <div class="phone-btn"><span class="phone-btn-icon">👁️</span>场景识别</div>
+                        <div class="phone-btn"><span class="phone-btn-icon">⚠️</span>障碍检测</div>
+                        <div class="phone-btn"><span class="phone-btn-icon">🧭</span>步行导航</div>
+                        <div class="phone-btn"><span class="phone-btn-icon">📄</span>文字朗读</div>
+                    </div>
+                    <div class="phone-voice">🎤</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Video -->
+    <section id="demo" style="text-align:center;">
+        <div class="section-header" style="text-align:center;">
+            <span class="section-tag">Live Demo</span>
+            <h2 class="section-title" style="margin:0 auto;">真机演示</h2>
+            <p class="section-desc" style="margin:0.8rem auto 0;">在 realme GT8 真机上的实际运行效果</p>
+        </div>
+        <div style="margin-top:2.5rem; border-radius:16px; overflow:hidden; border:1px solid var(--border); max-width:800px; margin-left:auto; margin-right:auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <iframe src="//player.bilibili.com/player.html?bvid=BV1RAGC6VE8t&autoplay=0&high_quality=1" 
+                    scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"
+                    style="width:100%; height:450px;">
+            </iframe>
+        </div>
+    </section>
+
+    <!-- Workflow -->
+    <section>
+        <div class="section-header" style="text-align:center;">
+            <span class="section-tag">工作流程</span>
+            <h2 class="section-title" style="margin:0 auto;">语音指令 → AI处理 → 语音播报</h2>
+        </div>
+        <div class="workflow-grid">
+            <div class="workflow-step">
+                <div class="workflow-circle">🎤</div>
+                <div class="workflow-label">语音输入</div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-circle">🧠</div>
+                <div class="workflow-label">端侧AI分析</div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-circle">⚡</div>
+                <div class="workflow-label">实时处理</div>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-circle">🔊</div>
+                <div class="workflow-label">语音播报</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features">
+        <div class="section-header">
+            <span class="section-tag">Core Features</span>
+            <h2 class="section-title">六大核心能力</h2>
+            <p class="section-desc">覆盖视障用户出行全场景，一部手机即可使用，零额外硬件成本。</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon icon-scene">👁️</div>
+                <h3>实时场景识别</h3>
+                <p>ML Kit Image Labeling 端侧推理，3秒内将摄像头画面转化为结构化描述。结合像素亮度与色调分析，输出自然语言场景播报。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-obstacle">⚠️</div>
+                <h3>障碍物检测预警</h3>
+                <p>实时识别行人、车辆、动物等高危目标，建立优先级队列，触发震动+语音双重预警。端侧处理，无需网络。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-nav">🧭</div>
+                <h3>步行语音导航</h3>
+                <p>高德 v3 步行 API + WGS84→GCJ02 坐标转换，语音输入目的地，路线逐段拆解为自然语言播报。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-ocr">📄</div>
+                <h3>OCR 文字朗读</h3>
+                <p>ML Kit Text Recognition 端侧文字提取，覆盖药品说明书、快递面单、路牌等日常场景。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-voice">🎤</div>
+                <h3>语音交互系统</h3>
+                <p>原生 SpeechRecognizer 封装，支持无 Google 服务的国产设备。全功能语音控制，零视觉依赖。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon icon-tts">🔊</div>
+                <h3>TTS 双引擎容灾</h3>
+                <p>系统TTS + 百度在线TTS自动降级 + 音频焦点管理。将国产设备语音可用率提升至接近 100%。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture -->
+    <section id="architecture">
+        <div class="section-header">
+            <span class="section-tag">Architecture</span>
+            <h2 class="section-title">技术架构</h2>
+            <p class="section-desc">端侧感知 + 语音输出，将视觉世界翻译为听觉信息。</p>
+        </div>
+
+        <div class="arch-container">
+            <div class="arch-layers">
+                <div class="arch-layer layer-perception">
+                    <div class="layer-name"><span class="layer-dot"></span>感知层 · 端侧 AI 三引擎并行</div>
+                    <div class="layer-desc">场景识别、障碍检测、OCR 共享摄像头数据流，帧调度避免资源竞争。全部端侧推理，无云端依赖，保护隐私。</div>
+                </div>
+                <div class="arch-layer layer-interaction">
+                    <div class="layer-name"><span class="layer-dot"></span>交互层 · 全语音闭环</div>
+                    <div class="layer-desc">双引擎容灾 TTS + 原生语音识别。链路：语音指令 → 功能执行 → AI 分析 → 语音播报，全程无需视觉操作。</div>
+                </div>
+                <div class="arch-layer layer-navigation">
+                    <div class="layer-name"><span class="layer-dot"></span>导航层 · 高德 API + 坐标纠偏</div>
+                    <div class="layer-desc">GPS WGS-84 实时转换 GCJ-02，消除 100-700m 偏移。路线逐段转自然语言，降低认知负荷。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-num">6</div>
+                <div class="stat-label">核心功能模块</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">3s</div>
+                <div class="stat-label">场景识别响应</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">~100%</div>
+                <div class="stat-label">TTS 设备覆盖</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num">0</div>
+                <div class="stat-label">硬件成本</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Innovation -->
+    <section id="innovation">
+        <div class="section-header">
+            <span class="section-tag">Innovation</span>
+            <h2 class="section-title">核心创新点</h2>
+            <p class="section-desc">针对国产 Android 设备生态的三大技术突破。</p>
+        </div>
+
+        <div class="innovation-list">
+            <div class="innovation-item">
+                <div class="innovation-num">1</div>
+                <div>
+                    <h4>TTS 端云容灾机制</h4>
+                    <p>去除临时对象竞态 + 延迟重试 + 在线降级 + AudioFocusRequest 音频焦点管理。一套代码兼容 ColorOS、MIUI 等主流国产系统，解决行业级语音合成适配难题。</p>
+                </div>
+            </div>
+            <div class="innovation-item">
+                <div class="innovation-num">2</div>
+                <div>
+                    <h4>端侧多模型复用架构</h4>
+                    <p>三大 AI 引擎共享摄像头数据流与计算资源，帧调度 + 优先级队列避免资源竞争。单设备运行全部模型，无需云端，离线可用。</p>
+                </div>
+            </div>
+            <div class="innovation-item">
+                <div class="innovation-num">3</div>
+                <div>
+                    <h4>全语音无障碍交互范式</h4>
+                    <p>从权限授权到功能操作全链路语音驱动。WGS84→GCJ02 坐标纠偏确保导航精度。可推广至驾驶辅助、智能家居等场景。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Code Structure -->
+    <section id="code">
+        <div class="section-header">
+            <span class="section-tag">Source Code</span>
+            <h2 class="section-title">项目结构</h2>
+            <p class="section-desc">Clean Architecture 分层，模块化设计，各功能可独立抽取复用。</p>
+        </div>
+
+        <div class="code-tree">
+<span class="folder">blind_assist_app/</span>
+├── <span class="folder">android/</span>
+│   └── <span class="folder">channels/</span>
+│       ├── <span class="file">TtsChannel.kt</span>          <span class="comment">// 原生TTS双引擎 V4</span>
+│       └── <span class="file">SpeechChannel.kt</span>       <span class="comment">// 原生语音识别</span>
+├── <span class="folder">lib/</span>
+│   ├── <span class="folder">core/</span>
+│   │   ├── <span class="folder">tts/</span>
+│   │   │   └── <span class="file">safe_tts.dart</span>      <span class="comment">// TTS统一封装</span>
+│   │   ├── <span class="folder">speech/</span>
+│   │   │   └── <span class="file">native_speech.dart</span> <span class="comment">// 语音识别封装</span>
+│   │   └── <span class="folder">services/</span>
+│   │       └── <span class="file">amap_nav_service.dart</span> <span class="comment">// 导航+坐标转换</span>
+│   └── <span class="folder">features/</span>
+│       ├── <span class="folder">recognize/</span>             <span class="comment">// 场景识别 (ML Kit)</span>
+│       ├── <span class="folder">obstacle_detection/</span>    <span class="comment">// 障碍物检测</span>
+│       ├── <span class="folder">navigation/</span>            <span class="comment">// 步行导航 (高德API)</span>
+│       ├── <span class="folder">ocr_recognition/</span>       <span class="comment">// OCR文字识别</span>
+│       ├── <span class="folder">voice_interaction/</span>     <span class="comment">// 语音交互</span>
+│       └── <span class="folder">onboarding/</span>            <span class="comment">// 权限引导</span>
+├── <span class="folder">assets/</span>
+│   └── <span class="folder">models/</span>                    <span class="comment">// TFLite模型文件</span>
+└── <span class="file">pubspec.yaml</span>
+        </div>
+
+        <div style="text-align:center; margin-top: 2.5rem;">
+            <a href="https://github.com/financial-risk-pop/qiming-blind-assist" target="_blank" class="btn-primary">
+                <svg viewBox="0 0 16 16" style="width:16px;height:16px;fill:currentColor;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                在 GitHub 上查看完整源码
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p class="motto">「愿你眼中有光」</p>
+        <p style="margin-top:0.3rem; font-size: 0.9rem;">启明 — AI视障出行辅助App</p>
+        <p style="margin-top:0.5rem; font-size: 0.82rem;">Flutter + ML Kit + 高德地图 · 端侧AI · 全语音交互</p>
+        <p style="margin-top: 1.5rem;">
+            <a href="https://github.com/financial-risk-pop/qiming-blind-assist" target="_blank" class="github-btn">
+                <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                GitHub 源码仓库
+            </a>
+        </p>
+        <p style="margin-top: 1rem; opacity: 0.4; font-size: 0.75rem;">© 2025 启明项目组</p>
+    </footer>
+
+    <script>
+        // Generate floating particles
+        const particlesEl = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDuration = (8 + Math.random() * 12) + 's';
+            p.style.animationDelay = Math.random() * 10 + 's';
+            p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+            particlesEl.appendChild(p);
+        }
+
+        // Scroll animations with stagger
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, i * 80);
+                }
+            });
+        }, { threshold: 0.08 });
+
+        document.querySelectorAll('.feature-card, .arch-layer, .stat-card, .innovation-item, .workflow-step').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(24px)';
+            el.style.transition = 'opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1)';
+            observer.observe(el);
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
